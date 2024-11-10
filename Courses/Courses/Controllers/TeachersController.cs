@@ -18,49 +18,52 @@ namespace Courses.Controllers
         public ActionResult<List<Teacher>> Get()
         {
             List<Teacher> res = teacherServer.GetTeachers();
-            return Ok(res);
+            return res;
         }
 
         // GET api/<TeachersController>/5
         [HttpGet("{id}")]
         public ActionResult<Teacher> Get(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             Teacher res = teacherServer.GetTeacherById(id);
             if(res == null)
             {
                 return NotFound();
             }
-            return Ok(res);
+            return res;
         }
 
         // POST api/<TeachersController>
         [HttpPost]
-        public ActionResult Post([FromBody] Teacher teacher)
+        public ActionResult<bool> Post([FromBody] Teacher teacher)
         {
-            teacherServer.PostTeacher(teacher);
-            return Ok();
+            if(teacherServer.AddTeacher(teacher))
+                return true;
+            return BadRequest();
         }
 
         // PUT api/<TeachersController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Teacher teacher)
+        public ActionResult<bool> Put(int id, [FromBody] Teacher teacher)
         {
-            bool flag = teacherServer.PutTeacher(id, teacher);
+            if (id <= 0)
+                return BadRequest();
+            bool flag = teacherServer.UpdateTeacher(id, teacher);
             if (flag)
-            {
-                return Ok();
-            }
+                return true;
             return NotFound();
         }
 
         // DELETE api/<TeachersController>/5
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public ActionResult<bool> Delete(int id)
         {
             bool flag = teacherServer.DeleteTeacher(id);
             if (flag)
             {
-                return Ok();
+                return true;
             }
             return NotFound();
         }

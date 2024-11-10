@@ -4,37 +4,50 @@ namespace Courses.Servers
 {
     public class TeacherServer
     {
-        public List<Teacher> teachers = new List<Teacher>();
         public List<Teacher> GetTeachers()
         {
-            return teachers;
+            return DataContextManager.DataContext.TeachersList;
         }
         public Teacher GetTeacherById(int id)
         {
-            return teachers.Find(t => t.Id == id);
+            return DataContextManager.DataContext.TeachersList.Find(t => t.Id == id);
         }
-        public bool PostTeacher(Teacher teacher)
+        public bool AddTeacher(Teacher teacher)
         {
-            teachers.Add(teacher);
-            return true;
+            ErrorType errorType;
+
+            bool isValid = new IsValidPhone().IsValid(teacher.Phone, out errorType);
+            if (isValid)
+            {
+                DataContextManager.DataContext.TeachersList.Add(teacher);
+                return true;
+            }
+            return false;
         }
 
-        public bool PutTeacher(int id, Teacher teacher)
+        public bool UpdateTeacher(int id, Teacher teacher)
         {
-            int index = teachers.FindIndex(t => t.Id == id);
+            ErrorType errorType;
+            bool isValid = new IsValidPhone().IsValid(teacher.Phone, out errorType);
+
+            if (!isValid)
+                return false;
+
+
+            int index = DataContextManager.DataContext.TeachersList.FindIndex(t => t.Id == id);
             if (index != -1)
             {
-                teachers[index] = teacher;
+                DataContextManager.DataContext.TeachersList[index] = teacher;
                 return true;
             }
             return false;
         }
         public bool DeleteTeacher(int id)
         {
-            Teacher del = teachers.Find(t => t.Id == id);
+            Teacher del = GetTeacherById(id);
             if (del != null)
             {
-                teachers.Remove(del);
+                DataContextManager.DataContext.TeachersList.Remove(del);
                 return true;
             }
             return false;

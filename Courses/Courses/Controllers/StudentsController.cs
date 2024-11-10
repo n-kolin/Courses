@@ -18,53 +18,58 @@ namespace Courses.Controllers
         public ActionResult<List<Student>> Get()
         {
             List<Student> res = studentServer.GetStudents();
-            return Ok(res);
+            return res;
         }
 
         // GET api/<StudentsController>/5
         [HttpGet("{id}")]
         public ActionResult<Student> Get(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             Student res = studentServer.GetStudentById(id);
             if(res == null)
             {
                 return NotFound();
             }
-            return Ok(res);
+            return res;
         }
 
         // POST api/<StudentsController>
         [HttpPost]
         public ActionResult<bool> Post([FromBody] Student student)
         {
-            studentServer.PostStudent(student);
+            if (studentServer.AddStudent(student))
+                return true;
+
+            return BadRequest();
             
-            return Ok(true);
+            
         }
 
         // PUT api/<StudentsController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Student student)
+        public ActionResult<bool> Put(int id, [FromBody] Student student)
         {
-            bool flag = studentServer.PutStudent(id, student);
-            if(flag)
-            {
-                return Ok();
-            }
-            
+            if (id <= 0)
+                return BadRequest();
+
+            bool flag = studentServer.UpdateStudent(id, student);
+
+            if (flag)
+                return true;
+
             return NotFound();
             
         }
 
         // DELETE api/<StudentsController>/5
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public ActionResult<bool> Delete(int id)
         {
             bool flag = studentServer.DeleteStudent(id);
             if (flag)
-            {
-                return Ok();
-            }
+                return true;
             return NotFound();
             
         }

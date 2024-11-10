@@ -26,43 +26,45 @@ namespace Courses.Controllers
         [HttpGet("{id}")]
         public ActionResult<StudentInCourse> Get(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             StudentInCourse res = studentInCourseServer.GetStudentInCourseById(id);
             if (res == null)
             {
                 return NotFound();
             }
-            return Ok(res);
+            return res;
         }
 
         // POST api/<StudentInCourseController>
         [HttpPost]
-        public ActionResult Post([FromBody] StudentInCourse studentInCourse)
+        public ActionResult<bool> Post([FromBody] StudentInCourse studentInCourse)
         {
-            studentInCourseServer.PostStudentInCourse(studentInCourse);
-            return Ok();
+            studentInCourseServer.AddStudentInCourse(studentInCourse);
+            return true;
         }
 
         // PUT api/<StudentInCourseController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] StudentInCourse studentInCourse)
+        public ActionResult<bool> Put(int id, [FromBody] StudentInCourse studentInCourse)
         {
-            bool flag = studentInCourseServer.PutStudentInCourse(id, studentInCourse);
+            if (id <= 0)
+                return BadRequest();
+            bool flag = studentInCourseServer.UpdateStudentInCourse(id, studentInCourse);
             if (flag)
-            {
-                return Ok();
-            }
+                return true;
+
             return NotFound();
         }
 
         // DELETE api/<StudentInCourseController>/5
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public ActionResult<bool> Delete(int id)
         {
             bool flag = studentInCourseServer.DeleteCourse(id);
             if (flag)
-            {
-                return Ok();
-            }
+                return true;
+
             return NotFound();
         }
     }

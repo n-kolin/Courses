@@ -4,39 +4,38 @@ namespace Courses.Servers
 {
     public class LessonServer
     {
-        public List<Lesson> lessons = new List<Lesson>();
 
         public List<Lesson> GetLessons()
         {
-            return lessons;
+            return DataContextManager.DataContext.LessonsList;
         }
         public Lesson GetLessonById(int id)
         {
-            return lessons.Find(l => l.Id == id);
+            return DataContextManager.DataContext.LessonsList.Find(l => l.Id == id);
         }
 
-        public bool PostLesson(Lesson lesson)
+        public bool AddLesson(Lesson lesson)
         {
-            lessons.Add(lesson);
+            DataContextManager.DataContext.LessonsList.Add(lesson);
             return true;
         }
 
-        public bool PutLesson(int id, Lesson lesson)
+        public bool UpdateLesson(int id, Lesson lesson)
         {
-            int index = lessons.FindIndex(l => l.Id == id);
+            int index = DataContextManager.DataContext.LessonsList.FindIndex(l => l.Id == id);
             if(index != -1)
             {
-                lessons[index] = lesson;
+                DataContextManager.DataContext.LessonsList[index] = lesson;
                 return true;
             }
             return false;
         }
         public bool DeleteLesson(int id)
         {
-            Lesson del = lessons.Find(l => l.Id == id);
+            Lesson del = GetLessonById(id);
             if(del != null)
             {
-                lessons.Remove(del);
+                DataContextManager.DataContext.LessonsList.Remove(del);
                 return true;
             }
             return false;

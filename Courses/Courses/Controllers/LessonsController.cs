@@ -17,50 +17,52 @@ namespace Courses.Controllers
         public ActionResult<List<Lesson>> Get()
         {
             List<Lesson> res = lessonServer.GetLessons();
-            return Ok(res);
+            return res;
         }
 
         // GET api/<LessonsController>/5
         [HttpGet("{id}")]
         public ActionResult<Lesson> Get(int id)
         {
+            if (id <= 0)
+                return BadRequest();
             Lesson res = lessonServer.GetLessonById(id);
             if (res == null)
             {
                 return NotFound();
             }
-            return Ok(res);
+            return res;
         }
 
         // POST api/<LessonsController>
         [HttpPost]
-        public ActionResult Post([FromBody] Lesson lesson)
+        public ActionResult<bool> Post([FromBody] Lesson lesson)
         {
-            lessonServer.PostLesson(lesson);
-            return Ok();
+            lessonServer.AddLesson(lesson);
+            return true;
         }
 
         // PUT api/<LessonsController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Lesson lesson)
+        public ActionResult<bool> Put(int id, [FromBody] Lesson lesson)
         {
-            bool flag = lessonServer.PutLesson(id, lesson);
+            if (id <= 0)
+                return BadRequest();
+            bool flag = lessonServer.UpdateLesson(id, lesson);
             if (flag)
-            {
-                return Ok();
-            }
+                return true;
+            
             return NotFound();
         }
 
         // DELETE api/<LessonsController>/5
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public ActionResult<bool> Delete(int id)
         {
             bool flag = lessonServer.DeleteLesson(id);
             if (flag)
-            {
-                return Ok();
-            }
+                return true;
+
             return NotFound();
         }
     }

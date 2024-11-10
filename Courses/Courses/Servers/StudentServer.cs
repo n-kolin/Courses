@@ -6,41 +6,60 @@ namespace Courses.Servers
 {
     public class StudentServer
     {
-        public List<Student> students = new List<Student>() { };
 
         public List<Student> GetStudents()
         {
-            return students;
+            return DataContextManager.DataContext.StudentsList;
         }
         public Student GetStudentById(int id)
-        {          
-            return students.Find(s => s.Id == id);
-        }
-        public bool PostStudent(Student student)
         {
-            students.Add(student);
-            return true;
+            
+            return DataContextManager.DataContext.StudentsList.Find(s => s.Id == id);
         }
-        public bool PutStudent(int id, Student student)
+        public bool AddStudent(Student student)
         {
-            int index = students.FindIndex(s=>s.Id == id);
-            if(index != -1)
+
+            ErrorType errorType;
+
+            bool isValid = new IsValidPhone().IsValid(student.Phone, out errorType);
+            if (isValid)
+            {
+                DataContextManager.DataContext.StudentsList.Add(student);
+                return true;
+            }         
+            return false;
+            
+
+        }
+        public bool UpdateStudent(int id, Student student)
+        {
+            ErrorType errorType;
+            bool isValid = new IsValidPhone().IsValid(student.Phone, out errorType);
+            
+            if (!isValid)            
+                return false;
+            
+
+            int index = DataContextManager.DataContext.StudentsList.FindIndex(s => s.Id == id);
+            if (index != -1)
             {
 
-                students[index] = student;
+                DataContextManager.DataContext.StudentsList[index] = student;
                 return true;
             }
             return false;
         }
         public bool DeleteStudent(int id)
         {
-            Student del = students.Find(s => s.Id == id);
-            if(del != null)
+            Student del = GetStudentById(id);
+            if (del != null)
             {
-                students.Remove(del);
+                DataContextManager.DataContext.StudentsList.Remove(del);
                 return true;
             }
             return false;
         }
+
+
     }
 }
