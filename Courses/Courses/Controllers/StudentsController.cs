@@ -10,8 +10,14 @@ namespace Courses.Controllers
     [ApiController]
     public class StudentsController : ControllerBase
     {
-        static readonly StudentServer studentServer = new StudentServer();
+        //static readonly StudentServer studentServer = new StudentServer();
+        readonly StudentServer studentServer;
 
+        public StudentsController(StudentServer studentServer)
+        {
+
+            this.studentServer = studentServer;
+        }
 
         // GET: api/<StudentsController>
         [HttpGet]

@@ -8,6 +8,6 @@
         public string Phone { get; set; }
         public string Email { get; set; }
 
-        public DateOnly SubscriptionDate { get; set; }
+        //public DateOnly SubscriptionDate { get; set; }
     }
 }

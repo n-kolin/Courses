@@ -6,15 +6,34 @@ namespace Courses.Servers
 {
     public class StudentServer
     {
+        readonly IDataContext _dataContext;
+
+        public StudentServer(IDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        public StudentServer()
+        {
+        }
 
         public List<Student> GetStudents()
         {
-            return DataContextManager.DataContext.StudentsList;
+
+            var dataStudents = _dataContext.LoadData();
+            if(dataStudents == null)
+                return null;
+            return dataStudents.ToList();
+            
+            //return DataContextManager.DataContext.StudentsList;
         }
         public Student GetStudentById(int id)
         {
-            
-            return DataContextManager.DataContext.StudentsList.Find(s => s.Id == id);
+            var dataStudents = _dataContext.LoadData();
+            if (dataStudents == null)
+                return null;
+            return dataStudents.Where(s=>s.Id==id).FirstOrDefault();
+            //return DataContextManager.DataContext.StudentsList.Find(s => s.Id == id);
         }
         public bool AddStudent(Student student)
         {
@@ -24,8 +43,13 @@ namespace Courses.Servers
             bool isValid = new IsValidPhone().IsValid(student.Phone, out errorType);
             if (isValid)
             {
-                DataContextManager.DataContext.StudentsList.Add(student);
-                return true;
+                var dataStudents = _dataContext.LoadData();
+                if (dataStudents == null)
+                    return false;
+                dataStudents.Add(student);
+                return _dataContext.SaveData(dataStudents);
+                //DataContextManager.DataContext.StudentsList.Add(student);
+                //return true;
             }         
             return false;
             
@@ -38,14 +62,18 @@ namespace Courses.Servers
             
             if (!isValid)            
                 return false;
-            
 
-            int index = DataContextManager.DataContext.StudentsList.FindIndex(s => s.Id == id);
+            var dataStudents = _dataContext.LoadData();
+            if (dataStudents == null)
+                return false;
+            int index = dataStudents.FindIndex(s => s.Id == id);
+            //int index = DataContextManager.DataContext.StudentsList.FindIndex(s => s.Id == id);
             if (index != -1)
             {
-
-                DataContextManager.DataContext.StudentsList[index] = student;
-                return true;
+                dataStudents[index] = student;
+                return _dataContext.SaveData(dataStudents);
+                //DataContextManager.DataContext.StudentsList[index] = student;
+                //return true;
             }
             return false;
         }
@@ -54,8 +82,14 @@ namespace Courses.Servers
             Student del = GetStudentById(id);
             if (del != null)
             {
-                DataContextManager.DataContext.StudentsList.Remove(del);
-                return true;
+                var dataStudents = _dataContext.LoadData();
+                if (dataStudents == null)
+                    return false;
+                dataStudents.Remove(del);
+                return _dataContext.SaveData(dataStudents);
+
+                //DataContextManager.DataContext.StudentsList.Remove(del);
+                //return true;
             }
             return false;
         }
